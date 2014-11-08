@@ -59,7 +59,7 @@ static cgtimer_t usb11_cgt;
 #define BITFURY_TIMEOUT_MS 999
 #define DRILLBIT_TIMEOUT_MS 999
 #define ICARUS_TIMEOUT_MS 999
-#define BMSC_TIMEOUT_MS 999
+#define BMSC_TIMEOUT_MS 2000
 
 #ifdef WIN32
 #define BFLSC_TIMEOUT_MS 999
