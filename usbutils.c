@@ -59,7 +59,7 @@ static cgtimer_t usb11_cgt;
 #define BITFURY_TIMEOUT_MS 999
 #define DRILLBIT_TIMEOUT_MS 999
 #define ICARUS_TIMEOUT_MS 999
-#define BMSC_TIMEOUT_MS 2000
+#define BMSC_TIMEOUT_MS 999
 
 #ifdef WIN32
 #define BFLSC_TIMEOUT_MS 999
@@ -72,7 +72,6 @@ static cgtimer_t usb11_cgt;
 #define HASHFAST_TIMEOUT_MS 999
 #define HASHRATIO_TIMEOUT_MS 999
 #define BLOCKERUPTER_TIMEOUT_MS 999
-
 /* The safety timeout we use, cancelling async transfers on windows that fail
  * to timeout on their own. */
 #define WIN_CALLBACK_EXTRA 40
