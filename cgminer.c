@@ -854,7 +854,6 @@ static char *set_rr(enum pool_strategy *strategy)
  * stratum+tcp or by detecting a stratum server response */
 bool detect_stratum(struct pool *pool, char *url)
 {
-	check_extranonce_option(pool, url);
 	if (!extract_sockaddr(url, &pool->sockaddr_url, &pool->stratum_port))
 		return false;
 
@@ -3306,7 +3305,7 @@ share_result(json_t *val, json_t *res, json_t *err, const struct work *work,
 		if (pool->seq_rejects > 10 && !work->stale && opt_disable_pool && enabled_pools > 1) {
 			double utility = total_accepted / total_secs * 60;
 
-			if (pool->seq_rejects > utility * 3) {
+			if (pool->seq_rejects > utility * 3 && enabled_pools > 1) {
 				applog(LOG_WARNING, "Pool %d rejected %d sequential shares, disabling!",
 				       pool->pool_no, pool->seq_rejects);
 				reject_pool(pool);
@@ -6245,7 +6244,7 @@ static void stratum_share_result(json_t *val, json_t *res_val, json_t *err_val,
 static bool parse_stratum_response(struct pool *pool, char *s)
 {
 	json_t *val = NULL, *err_val, *res_val, *id_val;
-	struct stratum_share *sshare;
+	struct stratum_share *sshare = NULL;
 	json_error_t err;
 	bool ret = false;
 	int id;
@@ -6257,6 +6256,8 @@ static bool parse_stratum_response(struct pool *pool, char *s)
 	}
 
 	res_val = json_object_get(val, "result");
+	if (!res_val)
+		goto out;
 	err_val = json_object_get(val, "error");
 	id_val = json_object_get(val, "id");
 
@@ -6488,7 +6489,10 @@ static void *stratum_rthread(void *userdata)
 			while (!restart_stratum(pool)) {
 				if (pool->removed)
 					goto out;
+				if (enabled_pools > 1)
 				cgsleep_ms(30000);
+				else
+					cgsleep_ms(3000);
 			}
 		}
 
@@ -6703,7 +6707,6 @@ static void *longpoll_thread(void *userdata);
 static bool stratum_works(struct pool *pool)
 {
 	applog(LOG_INFO, "Testing pool %d stratum %s", pool->pool_no, pool->stratum_url);
-	check_extranonce_option(pool, pool->stratum_url);
 	if (!extract_sockaddr(pool->stratum_url, &pool->sockaddr_url, &pool->stratum_port))
 		return false;
 
@@ -9670,6 +9673,14 @@ int main(int argc, char *argv[])
 	 * variables so do it before anything at all */
 	if (unlikely(curl_global_init(CURL_GLOBAL_ALL)))
 		early_quit(1, "Failed to curl_global_init");
+
+# ifdef __linux
+	/* If we're on a small lowspec platform with only one CPU, we should
+	 * yield after dropping a lock to allow a thread waiting for it to be
+	 * able to get CPU time to grab the lock. */
+	if (sysconf(_SC_NPROCESSORS_ONLN) == 1)
+		selective_yield = &sched_yield;
+#endif
 
 #if LOCK_TRACKING
 	// Must be first

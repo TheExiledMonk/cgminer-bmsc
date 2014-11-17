@@ -102,6 +102,8 @@ typedef LARGE_INTEGER cgtimer_t;
 typedef struct timespec cgtimer_t;
 #endif
 
+int no_yield(void);
+int (*selective_yield)(void);
 struct thr_info;
 struct pool;
 enum dev_reason;
@@ -143,7 +145,6 @@ void _recalloc(void **ptr, size_t old, size_t new, const char *file, const char 
 #define recalloc(ptr, old, new) _recalloc((void *)&(ptr), old, new, __FILE__, __func__, __LINE__)
 char *recv_line(struct pool *pool);
 bool parse_method(struct pool *pool, char *s);
-void check_extranonce_option(struct pool *pool, char * url);
 bool extract_sockaddr(char *url, char **sockaddr_url, char **sockaddr_port);
 bool auth_stratum(struct pool *pool);
 bool initiate_stratum(struct pool *pool);
