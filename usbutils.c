@@ -921,6 +921,29 @@ static struct usb_find_devices find_dev[] = {
 		.latency = LATENCY_STD,
 		INTINFO(cmr2_ints) },
 #endif
+#ifdef USE_J4B
+	{
+		.drv = DRIVER_j4b,
+		.name = "J4B",
+		.ident = IDENT_AMU,
+		.idVendor = 0x10c4,
+		.idProduct = 0xea60,
+		.config = 1,
+		.timeout = ICARUS_TIMEOUT_MS,
+		.latency = LATENCY_UNUSED,
+		INTINFO(amu_ints) },
+	{
+		.drv = DRIVER_j4b,
+		.name = "J4B",
+		.ident = IDENT_AMU,
+		.idVendor = 0x10c4,
+		.idProduct = 0xea71,
+		.config = 1,
+		.timeout = ICARUS_TIMEOUT_MS,
+		.latency = LATENCY_UNUSED,
+		INTINFO(amu_ints) },
+#endif
+
 #ifdef USE_BITMAIN
 	{
 		.drv = DRIVER_bitmain,

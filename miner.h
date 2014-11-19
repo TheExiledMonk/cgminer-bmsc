@@ -259,6 +259,7 @@ extern unsigned char bit_swap_table[256];
 	DRIVER_ADD_COMMAND(hashfast) \
 	DRIVER_ADD_COMMAND(hashratio) \
 	DRIVER_ADD_COMMAND(icarus) \
+	DRIVER_ADD_COMMAND(j4b) \
 	DRIVER_ADD_COMMAND(klondike) \
 	DRIVER_ADD_COMMAND(knc) \
 	DRIVER_ADD_COMMAND(bitmineA1) \
@@ -1073,6 +1074,18 @@ extern char *opt_bmsc_freq;
 extern char *opt_bmsc_rdreg;
 extern bool opt_bmsc_rdworktest;
 #endif
+#ifdef USE_J4B
+extern char *opt_j4b_options;
+extern char *opt_j4b_timing;
+extern bool opt_j4b_gray;
+extern char *opt_j4b_bandops;
+extern char *opt_j4b_voltage;
+extern bool opt_j4b_bootstart;
+extern char *opt_j4b_freq;
+extern char *opt_j4b_rdreg;
+extern bool opt_j4b_rdworktest;
+#endif
+
 #ifdef USE_MINION
 extern int opt_minion_chipreport;
 extern char *opt_minion_cores;

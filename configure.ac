@@ -136,6 +136,20 @@ if test "x$bmsc" = xyes; then
 fi
 AM_CONDITIONAL([HAS_BMSC], [test x$bmsc = xyes])
 
+standalone="no"
+j4b="no"
+drivercount=""
+
+AC_ARG_ENABLE([j4b],
+	[AC_HELP_STRING([--enable-j4b],[Compile support for J4bberwocks S1 Blade controller (default disabled)])],
+	[j4b=$enableval]
+	)
+if test "x$j4b" = xyes; then
+	AC_DEFINE([USE_j4b], [1], [Defined to 1 if J4bberwocks S1 blade controller support is wanted])
+	drivercount=x$drivercount
+fi
+AM_CONDITIONAL([HAS_J4B], [test x$j4b = xyes])
+
 
 bitmain="no"
 
@@ -430,7 +444,7 @@ fi
 
 
 #Add a new device to this list if it needs libusb, along with a no on the end.
-if test x$avalon$avalon2$bitforce$bitfury$blockerupter$modminer$bflsc$icarus$hashfast$hashratio$klondike$drillbit$cointerra$bmsc$bitmain != xnonononononononononononononono; then
+if test x$avalon$avalon2$bitforce$bitfury$blockerupter$modminer$bflsc$icarus$hashfast$hashratio$klondike$drillbit$cointerra$bmsc$j4b$bitmain != xnonononononononononononononono; then
 	want_usbutils=true
 else
 	want_usbutils=false
@@ -636,6 +650,13 @@ else
 	echo "  Bitmain.MultiChain...: Disabled"
 fi
 
+if test "x$j4b" = xyes; then
+	echo "  J4bberwock.Controller: Enabled"
+else
+	echo "  J4bberwock.Controller: Disabled"
+fi
+
+
 if test "x$avalon" = xyes; then
 	echo "  Avalon.ASICs.........: Enabled"
 else
@@ -753,7 +774,7 @@ else
 fi
 
 #Add any new device to this, along with a no on the end of the test
-if test "x$avalon$avalon2$bab$bflsc$bitforce$bitfury$blockerupter$hashfast$hashratio$icarus$klondike$knc$modminer$drillbit$minion$cointerra$bitmine_A1$bmsc$bitmain$sp10$sp30" = xnonononononononononononononononononononono; then
+if test "x$avalon$avalon2$bab$bflsc$bitforce$bitfury$blockerupter$hashfast$hashratio$icarus$klondike$knc$modminer$drillbit$minion$cointerra$bitmine_A1$bmsc$bitmain$sp10$sp30$j4b" = xnonononononononononononononononononononono; then
 	AC_MSG_ERROR([No mining devices configured in])
 fi
 
