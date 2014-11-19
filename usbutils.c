@@ -857,6 +857,17 @@ static struct usb_find_devices find_dev[] = {
 		INTINFO(amu_ints) },
 	{
 		.drv = DRIVER_bmsc,
+		.name = "AMU",
+		.ident = IDENT_AMU,
+		.idVendor = 0x10c4,
+		.idProduct = 0xea71,
+		.config = 1,
+		.timeout = ICARUS_TIMEOUT_MS,
+		.latency = LATENCY_UNUSED,
+		INTINFO(amu_ints) },
+
+	{
+		.drv = DRIVER_bmsc,
 		.name = "ANU",
 		.ident = IDENT_ANU,
 		.idVendor = 0x10c4,
