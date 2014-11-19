@@ -857,7 +857,7 @@ static struct usb_find_devices find_dev[] = {
 		INTINFO(amu_ints) },
 	{
 		.drv = DRIVER_bmsc,
-		.name = "AMU",
+		.name = "J4B",
 		.ident = IDENT_AMU,
 		.idVendor = 0x10c4,
 		.idProduct = 0xea71,
