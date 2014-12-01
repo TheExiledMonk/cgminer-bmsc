@@ -1655,23 +1655,21 @@ double tdiff(struct timeval *end, struct timeval *start)
 {
 	return end->tv_sec - start->tv_sec + (end->tv_usec - start->tv_usec) / 1000000.0;
 }
-
 void check_extranonce_option(struct pool *pool, char * url)
 {
-	char extra_op[16],*extra_op_loc;
-	extra_op_loc = strstr(url,"#");
+char extra_op[16],*extra_op_loc;
+extra_op_loc = strstr(url,"#");
         if(extra_op_loc && !pool->extranonce_subscribe)
         {
                 strcpy(extra_op, extra_op_loc);
                 *extra_op_loc = '\0';
-		if(!strcmp(extra_op,"#xnsub"))
-		{
-			pool->extranonce_subscribe = true;
-			printf("Extra nonce subscribing enabled.");
-			return;
-		}
+if(!strcmp(extra_op,"#xnsub"))
+{
+pool->extranonce_subscribe = true;
+applog(LOG_DEBUG, "Pool %d extranonce subscribe enabled.", pool->pool_no);
+}
         }
-	return;
+return;
 }
 
 bool extract_sockaddr(char *url, char **sockaddr_url, char **sockaddr_port)
@@ -2200,12 +2198,12 @@ static bool parse_extranonce(struct pool *pool, json_t *val)
                 quithere(1, "Failed to calloc pool->nonce1bin");
         hex2bin(pool->nonce1bin, pool->nonce1, pool->n1_len);
         pool->n2size = n2size;
-	applog(LOG_NOTICE, "Pool %d confirmed mining.extranonce.subscribe with extranonce1 %s extran2size %d",
+applog(LOG_NOTICE, "Pool %d confirmed mining.extranonce.subscribe with extranonce1 %s extran2size %d",
                                pool->pool_no, pool->nonce1, pool->n2size);
         cg_wunlock(&pool->data_lock);
-	return true;
+return true;
 out:
-	return false;
+return false;
 }
 
 static void __suspend_stratum(struct pool *pool)
@@ -2372,12 +2370,11 @@ bool parse_method(struct pool *pool, char *s)
 		ret = parse_diff(pool, params);
 		goto out_decref;
 	}
-	
+
 	if(!strncasecmp(buf, "mining.set_extranonce", 21)) {
 		ret = parse_extranonce(pool, params);
 		goto out_decref;
 	}
-
 
 	if (!strncasecmp(buf, "client.reconnect", 16)) {
 		ret = parse_reconnect(pool, params);
@@ -2878,6 +2875,18 @@ void suspend_stratum(struct pool *pool)
 	mutex_unlock(&pool->stratum_lock);
 }
 
+void extranonce_subscribe_stratum(struct pool *pool)
+{
+char s[RBUFSIZE];
+if(pool->extranonce_subscribe)
+        {
+        sprintf(s,"{\"id\": %d, \"method\": \"mining.extranonce.subscribe\", \"params\": []}", swork_id++);
+	applog(LOG_INFO, "Send extranonce.subscribe for stratum pool %d", pool->pool_no);
+                stratum_send(pool, s, strlen(s));
+        }
+}
+
+
 bool initiate_stratum(struct pool *pool)
 {
 	bool ret = false, recvd = false, noresume = false, sockd = false;
@@ -2980,7 +2989,6 @@ resend:
 		applog(LOG_DEBUG, "Pool %d stratum session id: %s", pool->pool_no, pool->sessionid);
 
 	ret = true;
-
 out:
 	if (ret) {
 		if (!pool->stratum_url)
@@ -2990,11 +2998,6 @@ out:
 		if (opt_protocol) {
 			applog(LOG_DEBUG, "Pool %d confirmed mining.subscribe with extranonce1 %s extran2size %d",
 			       pool->pool_no, pool->nonce1, pool->n2size);
-		}
-		if(pool->extranonce_subscribe)
-		{
-			sprintf(s,"{\"id\": %d, \"method\": \"mining.extranonce.subscribe\", \"params\": []}", swork_id++);
-		        stratum_send(pool, s, strlen(s));
 		}
 	} else {
 		if (recvd && !noresume) {
@@ -3031,6 +3034,7 @@ bool restart_stratum(struct pool *pool)
 		goto out;
 	if (!auth_stratum(pool))
 		goto out;
+	extranonce_subscribe_stratum(pool);
 	ret = true;
 out:
 	if (!ret)
