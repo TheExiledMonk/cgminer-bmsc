@@ -1070,7 +1070,6 @@ extern char *opt_bmsc_bandops;
 extern char *opt_bmsc_voltage;
 extern bool opt_bmsc_bootstart;
 extern char *opt_bmsc_freq;
-extern int *opt_bmsc_mhz;
 extern char *opt_bmsc_rdreg;
 extern bool opt_bmsc_rdworktest;
 #endif

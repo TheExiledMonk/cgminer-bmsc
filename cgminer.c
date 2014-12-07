@@ -264,7 +264,6 @@ char *opt_bmsc_bandops = NULL;
 char *opt_bmsc_timing = NULL;
 bool opt_bmsc_gray = false;
 char *opt_bmsc_freq = NULL;
-int *opt_bmsc_mhz = NULL;
 char *opt_bmsc_rdreg = NULL;
 char *opt_bmsc_voltage = NULL;
 bool opt_bmsc_bootstart = false;
@@ -1173,12 +1172,6 @@ static char *set_bmsc_freq(const char *arg)
 
 	return NULL;
 }
-static char *set_bmsc_mhz(const int *arg)
-{
-	opt_set_charp(arg, &opt_bmsc_mhz);
-
-	return NULL;
-}
 
 static char *set_bmsc_rdreg(const char *arg)
 {
@@ -1362,9 +1355,6 @@ static struct opt_table opt_config_table[] = {
 		     "Override avalon-options for BitBurner Fury boards baud:miners:asic:timeout:freq"),
 #endif
 #ifdef USE_BMSC
-	OPT_WITH_ARG("--bmsc-mhz",
-		    set_bmsc_mhz, NULL, NULL,
-		    "Requested speed in MHz"),
 	OPT_WITH_ARG("--bmsc-options",
 		     set_bmsc_options, NULL, NULL,
 		     opt_hidden),
